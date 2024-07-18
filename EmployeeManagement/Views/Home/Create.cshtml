@@ -26,7 +26,11 @@
         <label asp-for="Department" class="col-sm-2 col-form-label"></label>
         <div class="col-sm-10">
             <select asp-for="Department" class="form-select"
-                    asp-items="Html.GetEnumSelectList<Dept>()"></select>
+                    asp-items="Html.GetEnumSelectList<Dept>()">
+                <option value="">Please Select</option>
+            </select>
+
+            <span asp-validation-for="Department" class="text-danger"></span>
         </div>
     </div>
 
@@ -35,4 +39,4 @@
             <button type="submit" class="btn btn-primary">Create</button>
         </div>
     </div>
-    </form>
+</form>
