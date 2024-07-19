@@ -8,10 +8,12 @@ namespace EmployeeManagement.Controllers
     public class HomeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IWebHostEnvironment hostEnvironment;
 
-        public HomeController(IEmployeeRepository employeeRepository)
+        public HomeController(IEmployeeRepository employeeRepository, IWebHostEnvironment hostEnvironment)
         {
             _employeeRepository = employeeRepository;
+            this.hostEnvironment = hostEnvironment;
         }
 
         public IActionResult Index()
@@ -41,11 +43,29 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Employee employee)
+        public IActionResult Create(EmployeeCreateViewModel employee)
         {
             if (ModelState.IsValid)
             {
-                Employee newEmployee = _employeeRepository.Add(employee);
+                string uniqueFileName = null;
+                if (employee.Photo != null)
+                {
+                    string uploadsFolder = Path.Combine(hostEnvironment.WebRootPath, "images");
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + employee.Photo.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    employee.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
+                }
+
+                Employee newEmployee = new Employee
+                {
+                    Name = employee.Name,
+                    Email = employee.Email,
+                    Department = employee.Department,
+                    // Store the file name in PhotoPath property of the employee object
+                    // which gets saved to the Employees database table
+                    PhotoPath = uniqueFileName
+                };
+                _employeeRepository.Add(newEmployee);
                 return RedirectToAction("Details", new { id = newEmployee.Id });
             }
 
@@ -59,5 +79,5 @@ namespace EmployeeManagement.Controllers
         }
 
 
-      }
+    }
 }
