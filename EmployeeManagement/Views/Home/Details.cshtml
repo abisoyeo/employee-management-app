@@ -2,6 +2,8 @@
 
 @{
     ViewBag.Title = "Employee Details";
+    // Resolve the photo path for the employee.
+    // If the employee has a photo path, use it; otherwise, use the default "noimage.jpg".
     var photoPath = Url.Content("~/images/" + (!string.IsNullOrEmpty(Model.Employee.PhotoPath) ? Model.Employee.PhotoPath : "noimage.jpg"));
 }
 
@@ -22,8 +24,10 @@
             </div>
             <div class="card-footer text-center">
                 <a href="#" class="btn btn-primary">Back</a>
-                <a href="#" class="btn btn-primary">Edit</a>
+                <a asp-asp-controller="Home" asp-action="Edit"
+                   asp-route-id="@Model.Employee.Id" class="btn btn-primary">Edit</a>
                 <a href="#" class="btn btn-danger">Delete</a>
             </div>
         </div>
     </div>
+</div>
