@@ -14,17 +14,17 @@ namespace EmployeeManagement.Models
 
         public Employee Add(Employee employee)
         {
-            context.EmployeeTest.Add(employee);
+            context.Employees.Add(employee);
             context.SaveChanges();
             return employee;
         }
 
         public Employee Delete(int id)
         {
-            Employee employee = context.EmployeeTest.Find(id);
+            Employee employee = context.Employees.Find(id);
             if (employee != null)
             {
-                context.EmployeeTest.Remove(employee);
+                context.Employees.Remove(employee);
                 context.SaveChanges();
             }
             return employee;
@@ -32,17 +32,17 @@ namespace EmployeeManagement.Models
 
         public IEnumerable<Employee> GetAllEmployees()
         {
-            return context.EmployeeTest;
+            return context.Employees;
         }
 
         public Employee GetEmployee(int Id)
         {
-            return context.EmployeeTest.Find(Id);
+            return context.Employees.Find(Id);
         }
 
         public Employee Update(Employee employeeChanges)
         {
-            context.EmployeeTest.Update(employeeChanges);
+            context.Employees.Update(employeeChanges);
             context.SaveChanges();
 
             return employeeChanges;

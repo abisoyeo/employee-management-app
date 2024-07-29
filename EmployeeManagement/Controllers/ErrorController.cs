@@ -12,6 +12,7 @@ namespace EmployeeManagement.Controllers
         {
             this.logger = logger;
         }
+
         // If there is 404 status code, the route path will become Error/404
         [Route("Error/{statusCode}")]
         public IActionResult HttpStatusCodeHandler(int statusCode)
