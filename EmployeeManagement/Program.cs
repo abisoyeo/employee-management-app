@@ -1,6 +1,7 @@
 using EmployeeManagement.DataAccess;
 using EmployeeManagement.Models;
 using Microsoft.EntityFrameworkCore;
+using NLog.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,15 @@ builder.Services.AddDbContext<AppDbContext>(
     options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("EmployeeDbConnection")));
 builder.Services.AddScoped<IEmployeeRepository, SQLEmployeeRepo>();
+
+// Configure NLog
+builder.Services.AddLogging(logging =>
+{
+    logging.SetMinimumLevel(LogLevel.Critical);
+});
+
+// Add NLog as the logger provider
+builder.Services.AddSingleton<ILoggerProvider, NLogLoggerProvider>();
 
 
 var app = builder.Build();
