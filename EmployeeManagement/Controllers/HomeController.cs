@@ -1,5 +1,6 @@
 using EmployeeManagement.Models;
 using EmployeeManagement.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting.Internal;
 using System.Diagnostics;
@@ -17,6 +18,7 @@ namespace EmployeeManagement.Controllers
             this.hostEnvironment = hostEnvironment;
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var model = _employeeRepository.GetAllEmployees();

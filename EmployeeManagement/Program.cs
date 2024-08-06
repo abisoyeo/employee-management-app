@@ -1,5 +1,6 @@
 using EmployeeManagement.DataAccess;
 using EmployeeManagement.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NLog.Extensions.Logging;
@@ -12,10 +13,17 @@ builder.Services.AddDbContext<AppDbContext>(
     options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("EmployeeDbConnection")));
 builder.Services.AddScoped<IEmployeeRepository, SQLEmployeeRepo>();
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-{   options.Password.RequiredLength = 5;
-}).AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+    {
+        options.Password.RequiredLength = 5;
+    }).AddEntityFrameworkStores<AppDbContext>();
 
+builder.Services.AddAuthorization(option =>
+{
+    option.FallbackPolicy = new AuthorizationPolicyBuilder()
+          .RequireAuthenticatedUser()
+          .Build();
+});
 
 // Configure NLog
 builder.Services.AddLogging(logging =>
@@ -46,6 +54,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",
