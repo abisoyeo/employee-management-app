@@ -14,10 +14,17 @@ namespace EmployeeManagement.DataAccess
         public DbSet<Employee> Employees { get; set; }
 
 
-        // Uncomment to add seed data on creating new db
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Seed();
-        //}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            //// Uncomment to add seed data on creating new db
+            //modelBuilder.Seed();
+
+            foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+        }
     }
 }
