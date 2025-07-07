@@ -1,6 +1,6 @@
 ﻿namespace EmployeeManagement.ViewModels
 {
-    public class UserRoleViewModel
+    public class EditUsersInRoleViewModel
     {
         public string UserId { get; set; }
         public string UserName { get; set; }

@@ -12,9 +12,9 @@ namespace EmployeeManagement.Controllers
     {
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly ILogger logger;
+        private readonly ILogger<AdministrationController> logger;
 
-        public AdministrationController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, ILogger logger)
+        public AdministrationController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, ILogger<AdministrationController> logger)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
@@ -87,6 +87,45 @@ namespace EmployeeManagement.Controllers
 
                 return View(model);
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageUserRoles(string userId)
+        {
+            ViewBag.userId = userId;
+
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
+                return View("NotFound");
+            }
+
+            var model = new List<UserRolesViewModel>();
+
+            foreach (var role in roleManager.Roles)
+            {
+                var userRolesViewModel = new UserRolesViewModel
+                {
+                    RoleId = role.Id,
+                    RoleName = role.Name
+                };
+
+                if (await userManager.IsInRoleAsync(user, role.Name))
+                {
+                    userRolesViewModel.IsSelected = true;
+                }
+                else
+                {
+                    userRolesViewModel.IsSelected = false;
+
+                }
+
+                model.Add(userRolesViewModel);
+            }
+
+            return View(model);
         }
 
         [HttpPost]
@@ -282,11 +321,11 @@ namespace EmployeeManagement.Controllers
                 return View("NotFound");
             }
 
-            var model = new List<UserRoleViewModel>();
+            var model = new List<EditUsersInRoleViewModel>();
 
             foreach (var user in userManager.Users)
             {
-                var userRoleViewModel = new UserRoleViewModel
+                var userRoleViewModel = new EditUsersInRoleViewModel
                 {
                     UserId = user.Id,
                     UserName = user.UserName,
@@ -311,7 +350,7 @@ namespace EmployeeManagement.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> EditUsersInRole(List<UserRoleViewModel> model, string roleId)
+        public async Task<IActionResult> EditUsersInRole(List<EditUsersInRoleViewModel> model, string roleId)
         {
             var role = await roleManager.FindByIdAsync(roleId);
 
